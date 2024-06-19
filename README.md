@@ -39,5 +39,5 @@ Aplikacija za zaznavanje obrazov in oƒçi z uporabo umetne inteligence, ki omogoƒ
 ### Namestitev
 1. **Kloniranje repozitorija**:
    ```bash
-   git clone https://github.com/uporabnik/FaceEyeDetectionApp.git
-   cd FaceEyeDetectionApp
+   [git clone https://github.com/TP2304/ProjectAI.git]
+    cd FaceEyeDetectionApp
