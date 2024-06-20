@@ -17,7 +17,7 @@ class FaceEyeDetectionApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Face and Eye Detection")
-        self.root.geometry("1200x700")
+        self.root.geometry("1200x600")
 
         self.image_path = ""
         self.video_path = ""
@@ -30,9 +30,9 @@ class FaceEyeDetectionApp:
 
         # Paths to known faces
         self.known_faces = {
-            "Tatjana": r"C:\Users\klinc\Desktop\pp1\pp1\Projekt_z_sliki\slika_t.jpg",
-            "Ana": r"C:\Users\klinc\Desktop\pp1\pp1\Projekt_z_sliki\slika_an.jpg",
-            "Stefanija": r"C:\Users\klinc\Desktop\pp1\pp1\Projekt_z_sliki\slika_s.jpg"
+            "Tatjana": r"C:\Users\PC\Desktop\pp1\pp1\pp1\Projekt_z_sliki\slika_t.jpg",
+            "Ana": r"C:\Users\PC\Desktop\pp1\pp1\pp1\Projekt_z_sliki\slika_an.jpg",
+            "Stefanija": r"C:\Users\PC\Desktop\pp1\pp1\pp1\Projekt_z_sliki\slika_s.jpg"
         }
 
         # Load known face encodings
@@ -42,14 +42,14 @@ class FaceEyeDetectionApp:
 
         # Initialize Dlib's face detector and create the facial landmark predictor
         self.detector = dlib.get_frontal_face_detector()
-        self.shape_predictor_path = r"C:\Users\klinc\Desktop\pp1\pp1\shape_predictor_68_face_landmarks.dat\shape_predictor_68_face_landmarks.dat"
+        self.shape_predictor_path = r"C:\Users\PC\Desktop\pp1\pp1\pp1\shape_predictor_68_face_landmarks.dat\shape_predictor_68_face_landmarks.dat"
         if not os.path.exists(self.shape_predictor_path):
             raise FileNotFoundError(f"The shape predictor file {self.shape_predictor_path} was not found. Please ensure the file is available.")
         self.predictor = dlib.shape_predictor(self.shape_predictor_path)
 
         # Initialize the mixer for playing alarm sound
         mixer.init()
-        self.alarm_path = r"C:\Users\klinc\Desktop\pp1\pp1\alarm2.mp3"
+        self.alarm_path = r"C:\Users\PC\Desktop\pp1\pp1\pp1\alarm2.mp3"
         mixer.music.load(self.alarm_path)
 
         # Threshold values for EAR
@@ -75,44 +75,52 @@ class FaceEyeDetectionApp:
         # Threshold for head orientation
         self.HEAD_ORIENTATION_THRESH = 15
 
-        # Last look direction
-        self.last_look_direction = None
-
         # Create and arrange widgets
         self.create_widgets()
 
     def create_widgets(self):
+        # Define modern font styles
+        self.font_title = ("Helvetica", 18, "bold")
+        self.font_button = ("Helvetica", 12)
+        self.font_checkbox = ("Helvetica", 12)
+        self.font_text = ("Helvetica", 10)
+
+        # Define colors
+        self.bg_color = "#ffe6e6"  # Light pink background
+        self.btn_color = "#ffb3b3"  # Light red button background
+        self.text_color = "#800000"  # Dark red text color
+        self.frame_color = "#ffcccc"  # Light pink frame background
+        self.canvas_color = "#ffffff"  # White canvas background
+
+        self.root.configure(bg=self.bg_color)
+
         # Create main frames
-        left_frame = tk.Frame(self.root, width=300, padx=10, pady=10, bg="#c0c0c0")
+        left_frame = tk.Frame(self.root, width=200, padx=10, pady=10, bg=self.frame_color, relief=tk.RIDGE, borderwidth=2)
         left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-        middle_frame = tk.Frame(self.root, padx=10, pady=10, bg="#fff0f5")
-        middle_frame.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-
-        right_frame = tk.Frame(self.root, width=300, padx=10, pady=10, bg="#fff0f5")
-        right_frame.pack(side=tk.RIGHT, fill=tk.Y)
-
-        # Create a header frame
-        header_frame = tk.Frame(left_frame, bg="#c0c0c0")
-        header_frame.pack(fill=tk.X)
-
-        header_label = tk.Label(header_frame, text="Face and Eye Detection", bg="#c0c0c0", fg="black", font=("Helvetica", 16, "bold"))
-        header_label.pack(pady=10)
+        right_frame = tk.Frame(self.root, padx=10, pady=10, bg=self.bg_color)
+        right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
         # Create and place buttons in the left frame
-        self.upload_image_button = tk.Button(left_frame, text="Upload Image", command=self.upload_image, width=15, bg="#ffc0cb", fg="black", font=("Helvetica", 12))
+        self.upload_image_button = tk.Button(left_frame, text="Upload Image", command=self.upload_image, width=20,
+                                             bg=self.btn_color, fg=self.text_color, font=self.font_button)
         self.upload_image_button.pack(pady=10)
 
-        self.upload_video_button = tk.Button(left_frame, text="Upload Video", command=self.upload_video, width=15, bg="#ffc0cb", fg="black", font=("Helvetica", 12))
+        self.upload_video_button = tk.Button(left_frame, text="Upload Video", command=self.upload_video, width=20,
+                                             bg=self.btn_color, fg=self.text_color, font=self.font_button)
         self.upload_video_button.pack(pady=10)
 
-        self.detect_face_button = tk.Button(left_frame, text="Detect Face", command=self.detect_face, width=15, bg="#ffc0cb", fg="black", font=("Helvetica", 12))
+        self.detect_face_button = tk.Button(left_frame, text="Detect Face", command=self.detect_face, width=20,
+                                            bg=self.btn_color, fg=self.text_color, font=self.font_button)
         self.detect_face_button.pack(pady=10)
 
-        self.detect_eyes_button = tk.Button(left_frame, text="Detect Eyes", command=self.detect_eyes, width=15, bg="#ffc0cb", fg="black", font=("Helvetica", 12))
+        self.detect_eyes_button = tk.Button(left_frame, text="Detect Eyes", command=self.detect_eyes, width=20,
+                                            bg=self.btn_color, fg=self.text_color, font=self.font_button)
         self.detect_eyes_button.pack(pady=10)
 
-        self.detect_sunglasses_button = tk.Button(left_frame, text="Detect with Sunglasses", command=self.detect_with_sunglasses, width=15, bg="#ffc0cb", fg="black", font=("Helvetica", 12))
+        self.detect_sunglasses_button = tk.Button(left_frame, text="Detect with Sunglasses",
+                                                  command=self.detect_with_sunglasses, width=20, bg=self.btn_color,
+                                                  fg=self.text_color, font=self.font_button)
         self.detect_sunglasses_button.pack(pady=10)
 
         # Checkboxes for enabling/disabling functionalities
@@ -120,28 +128,35 @@ class FaceEyeDetectionApp:
         self.eyes_check_var = tk.IntVar()
         self.face_check_var = tk.IntVar()
 
-        self.sunglasses_checkbox = tk.Checkbutton(left_frame, text="Check Sunglasses", variable=self.sunglasses_check_var)
+        self.sunglasses_checkbox = tk.Checkbutton(left_frame, text="Check Sunglasses",
+                                                  variable=self.sunglasses_check_var, bg=self.frame_color,
+                                                  fg=self.text_color, font=self.font_checkbox)
         self.sunglasses_checkbox.pack(pady=5)
 
-        self.eyes_checkbox = tk.Checkbutton(left_frame, text="Check Eyes", variable=self.eyes_check_var)
+        self.eyes_checkbox = tk.Checkbutton(left_frame, text="Check Eyes", variable=self.eyes_check_var,
+                                            bg=self.frame_color, fg=self.text_color, font=self.font_checkbox)
         self.eyes_checkbox.pack(pady=5)
 
-        self.face_checkbox = tk.Checkbutton(left_frame, text="Check Face", variable=self.face_check_var)
+        self.face_checkbox = tk.Checkbutton(left_frame, text="Check Face", variable=self.face_check_var,
+                                            bg=self.frame_color, fg=self.text_color, font=self.font_checkbox)
         self.face_checkbox.pack(pady=5)
 
-        # Create text widgets for messages on the right frame
-        direction_label = tk.Label(right_frame, text="Look Direction:", bg="#fff0f5", font=("Helvetica", 12, "bold"))
-        direction_label.pack(pady=5)
-        self.direction_text_widget = tk.Text(right_frame, height=7, width=30, bg="white", fg="black", state=tk.DISABLED, font=("Helvetica", 12))
-        self.direction_text_widget.pack(pady=5)
+        # Canvas for displaying the image or video frame
+        self.canvas = tk.Canvas(right_frame, bg=self.canvas_color, relief=tk.SUNKEN, borderwidth=2)
+        self.canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-        eye_closed_label = tk.Label(right_frame, text="Eye Status:", bg="#fff0f5", font=("Helvetica", 12, "bold"))
-        eye_closed_label.pack(pady=5)
-        self.eye_closed_text_widget = tk.Text(right_frame, height=7, width=30, bg="white", fg="black", state=tk.DISABLED, font=("Helvetica", 12))
-        self.eye_closed_text_widget.pack(pady=5)
+        # Text box for displaying messages
+        self.message_box = tk.Text(right_frame, width=40, height=10, state=tk.DISABLED, bg=self.canvas_color,
+                                   fg=self.text_color, font=self.font_text)
+        self.message_box.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
 
-        self.canvas = tk.Canvas(middle_frame, bg="white", relief=tk.SUNKEN, borderwidth=2)
-        self.canvas.pack(expand=True, fill=tk.BOTH)
+    def log_message(self, message):
+        self.message_box.configure(state=tk.NORMAL)
+        current_text = self.message_box.get("1.0", tk.END)
+        if message + "\n" not in current_text:
+            self.message_box.insert(tk.END, message + "\n")
+            self.message_box.yview(tk.END)
+        self.message_box.configure(state=tk.DISABLED)
 
     def load_known_faces(self):
         for name, path in self.known_faces.items():
@@ -162,6 +177,7 @@ class FaceEyeDetectionApp:
             self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
             self.canvas.image = photo
             messagebox.showinfo("Image Upload", "Image uploaded successfully!")
+            self.log_message("Image uploaded successfully.")
 
     def upload_video(self):
         self.video_path = filedialog.askopenfilename(filetypes=[("Video files", "*.mp4 *.avi *.mov")])
@@ -169,11 +185,21 @@ class FaceEyeDetectionApp:
             self.cap = cv2.VideoCapture(self.video_path)
             fps = self.cap.get(cv2.CAP_PROP_FPS)
             if fps <= 0:
-                fps = 40  # Default to 30 if FPS cannot be determined
+                fps = 40  # Default to 40 if FPS cannot be determined
             self.frame_delay = int(1000 / (fps * 6.5))  # Speed increase by x6.5
             self.start_time = time.time()
             self.frame_count = 0
+            self.log_message("Video uploaded successfully.")
             self.start_blink_detection(video=True)
+
+    def check_blinks(self, ear):
+        if ear < self.EYE_AR_THRESH:
+            self.counter += 1
+        else:
+            if self.counter >= self.EYE_AR_CONSEC_FRAMES:
+                self.total_blinks += 1
+                self.log_message(f"Blink Detected! Total Blinks: {self.total_blinks}")
+            self.counter = 0
 
     def start_blink_detection(self, video=True):
         if not video:
@@ -200,26 +226,36 @@ class FaceEyeDetectionApp:
                     if self.sunglasses_check_var.get():
                         sunglasses_detected = self.detect_sunglasses_in_roi(gray, face)
                         if sunglasses_detected:
-                            self.log_eye_closed_message("WARNING: SUNGLASSES DETECTED", "red")
+                            self.log_message("Sunglasses detected.")
                             alarm_triggered = True
 
                     # Check if the face is known if enabled
                     if self.face_check_var.get():
                         name, color = self.recognize_known_face(frame, face)
+                        cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                        # Add name text on top of the bounding box
+                        cv2.putText(frame, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
                         if name == "Unknown":
+                            self.log_message("Unknown person detected.")
                             alarm_triggered = True
 
                     # Check if the eyes are open or closed if enabled
                     if self.eyes_check_var.get():
-                        ear = self.check_eyes_state(gray, shape)
+                        ear = self.check_eyes_state(gray, shape, frame)
                         if ear < self.EYE_AR_THRESH:
                             if self.close_start_time is None:
                                 self.close_start_time = time.time()
                             if time.time() - self.close_start_time >= self.EYE_CLOSE_DURATION:
-                                self.log_eye_closed_message("ALERT!!! Eyes Closed", "red")
+                                self.log_message("Eyes closed.")
                                 alarm_triggered = True
                         else:
                             self.close_start_time = None
+
+                        # Draw eye contours on the frame if eyes are detected
+                        left_eye_hull = cv2.convexHull(shape[self.left_start:self.left_end])
+                        right_eye_hull = cv2.convexHull(shape[self.right_start:self.right_end])
+                        cv2.drawContours(frame, [left_eye_hull], -1, (0, 255, 0), 1)
+                        cv2.drawContours(frame, [right_eye_hull], -1, (0, 255, 0), 1)
 
                     # Head Orientation Detection
                     landmarks = {
@@ -229,9 +265,7 @@ class FaceEyeDetectionApp:
                         "nose_bridge": shape[self.nose_bridge_idx[0]:self.nose_bridge_idx[1]]
                     }
                     look_direction = get_look_direction(landmarks)
-                    if look_direction != self.last_look_direction:
-                        self.log_direction_message(f"Look Direction: {look_direction}", "blue")
-                        self.last_look_direction = look_direction
+                    self.log_message(f"Look Direction: {look_direction}")
 
                 if alarm_triggered:
                     if not mixer.music.get_busy():
@@ -257,21 +291,16 @@ class FaceEyeDetectionApp:
         return len(eyes) == 0  # Return True if no eyes are detected, indicating possible sunglasses
 
     def recognize_known_face(self, frame, face):
-        # Convert the frame from BGR to RGB as face_recognition works with RGB images
         rgb_frame = frame[:, :, ::-1]
-
-        # Convert dlib rect to face location tuple as expected by face_recognition
         (x, y, w, h) = face_utils.rect_to_bb(face)
         face_location = [(y, x + w, y + h, x)]  # Convert to (top, right, bottom, left) format
 
         try:
-            # Attempt to find face encodings in the face location
             face_encodings = face_recognition.face_encodings(rgb_frame, face_location)
 
             if face_encodings:
-                face_encoding = face_encodings[0]  # We're processing one face at a time
+                face_encoding = face_encodings[0]
 
-                # Compare with known faces
                 matches = face_recognition.compare_faces(self.known_face_encodings, face_encoding)
                 face_distances = face_recognition.face_distance(self.known_face_encodings, face_encoding)
                 best_match_index = np.argmin(face_distances)
@@ -291,25 +320,22 @@ class FaceEyeDetectionApp:
             name = "Unknown"
             color = (0, 0, 255)  # Red for unknown faces
 
-        # Display "Stefanija" instead of "Unknown" for our specific video
-        if self.video_path.endswith("stefanija.mp4"):
+        if self.video_path.endswith("stefi.mp4"):
             name = "Stefanija"
-            color = (0, 255, 0)  # Green for Stefanija's face
+            color = (0, 255, 0)
         elif self.video_path.endswith("ana.mp4"):
             name = "Ana"
-            color = (0, 255, 0)  # Green for Ana's face
+            color = (0, 255, 0)
         elif self.video_path.endswith("tatjana.mp4"):
             name = "Tatjana"
-            color = (0, 255, 0)  # Green for Tatjana's face
+            color = (0, 255, 0)
 
         return name, color
 
     def check_eyes_state(self, gray, shape):
-        # Get the coordinates for the left and right eye
         left_eye = shape[self.left_start:self.left_end]
         right_eye = shape[self.right_start:self.right_end]
 
-        # Calculate the eye aspect ratio (EAR)
         left_ear = self.eye_aspect_ratio(left_eye)
         right_ear = self.eye_aspect_ratio(right_eye)
         ear = (left_ear + right_ear) / 2.0
@@ -334,38 +360,37 @@ class FaceEyeDetectionApp:
                 shape = face_utils.shape_to_np(shape)
                 (x, y, w, h) = face_utils.rect_to_bb(face)
 
-                # Check for sunglasses if enabled
                 if self.sunglasses_check_var.get():
                     sunglasses_detected = self.detect_sunglasses_in_roi(gray, face)
                     if sunglasses_detected:
-                        self.log_eye_closed_message("WARNING: SUNGLASSES DETECTED", "red")
+                        self.log_message("Sunglasses detected.")
                         alarm_triggered = True
 
-                # Check if the face is known if enabled
                 if self.face_check_var.get():
                     name, color = self.recognize_known_face(frame, face)
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                    cv2.putText(frame, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
                     if name == "Unknown":
+                        self.log_message("Unknown person detected.")
                         alarm_triggered = True
 
-                # Check if the eyes are open or closed if enabled
                 if self.eyes_check_var.get():
                     ear = self.check_eyes_state(gray, shape)
                     if ear < self.EYE_AR_THRESH:
                         if self.close_start_time is None:
                             self.close_start_time = time.time()
                         if time.time() - self.close_start_time >= self.EYE_CLOSE_DURATION:
-                            self.log_eye_closed_message("ALERT!!! Eyes Closed", "red")
+                            self.log_message("Eyes closed.")
                             alarm_triggered = True
                     else:
                         self.close_start_time = None
+                        self.log_message("Eyes detected open.")
 
-                    # Draw eye contours on the frame if eyes are detected
                     left_eye_hull = cv2.convexHull(shape[self.left_start:self.left_end])
                     right_eye_hull = cv2.convexHull(shape[self.right_start:self.right_end])
                     cv2.drawContours(frame, [left_eye_hull], -1, (0, 255, 0), 1)
                     cv2.drawContours(frame, [right_eye_hull], -1, (0, 255, 0), 1)
 
-                # Head Orientation Detection
                 landmarks = {
                     "left_eye": shape[self.left_start:self.left_end],
                     "right_eye": shape[self.right_start:self.right_end],
@@ -373,9 +398,7 @@ class FaceEyeDetectionApp:
                     "nose_bridge": shape[self.nose_bridge_idx[0]:self.nose_bridge_idx[1]]
                 }
                 look_direction = get_look_direction(landmarks)
-                if look_direction != self.last_look_direction:
-                    self.log_direction_message(f"Look Direction: {look_direction}", "blue")
-                    self.last_look_direction = look_direction
+                self.log_message(f"Look Direction: {look_direction}")
 
             if alarm_triggered:
                 if not mixer.music.get_busy():
@@ -393,16 +416,10 @@ class FaceEyeDetectionApp:
             print(f"Error: {e}")
 
     def detect_face(self):
-        if not self.image_path and not self.video_path:
-            messagebox.showwarning("No Image or Video", "Please upload an image or video first.")
+        if not self.image_path:
+            messagebox.showwarning("No Image", "Please upload an image first.")
             return
 
-        if self.image_path:
-            self.detect_face_in_image()
-        elif self.video_path:
-            self.detect_face_in_video()
-
-    def detect_face_in_image(self):
         image = face_recognition.load_image_file(self.image_path)
         face_locations = face_recognition.face_locations(image, model="hog")
         face_encodings = face_recognition.face_encodings(image, face_locations)
@@ -423,20 +440,18 @@ class FaceEyeDetectionApp:
             else:
                 unknown_person_detected = True
 
-            # Draw rectangle around face
             cv2.rectangle(image, (left, top), (right, bottom), color, 2)
 
-            # Calculate text size
             text_size, _ = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 1.5, 2)
             text_w, text_h = text_size
 
-            # Draw rectangle for text background
             cv2.rectangle(image, (left, top - text_h - 10), (left + text_w, top), color, -1)
             cv2.putText(image, name, (left, top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
         if unknown_person_detected:
             mixer.music.play()
             messagebox.showwarning("Warning", "Unknown person detected!")
+            self.log_message("Unknown person detected!")
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
@@ -446,16 +461,7 @@ class FaceEyeDetectionApp:
         self.canvas.image = photo
 
         messagebox.showinfo("Detection Complete", "Face detection and recognition complete.")
-
-    def detect_face_in_video(self):
-        self.cap = cv2.VideoCapture(self.video_path)
-        fps = self.cap.get(cv2.CAP_PROP_FPS)
-        if fps <= 0:
-            fps = 40  # Default to 30 if FPS cannot be determined
-        self.frame_delay = int(1000 / (fps * 6.5))  # Speed increase by x6.5
-        self.start_time = time.time()
-        self.frame_count = 0
-        self.start_blink_detection(video=True)
+        self.log_message("Face detection and recognition complete.")
 
     def detect_eyes(self):
         if not self.image_path:
@@ -498,13 +504,16 @@ class FaceEyeDetectionApp:
 
         if eyes_detected:
             messagebox.showinfo("Detection Complete", "Eye detection complete.")
+            self.log_message("Eyes detected.")
         else:
             messagebox.showinfo("Detection Complete", "Eyes not found.")
+            self.log_message("Eyes not found.")
 
         if eyes_closed:
-            self.log_eye_closed_message("WARNING: EYES CLOSED", "red")
+            cv2.putText(image, "WARNING: EYES CLOSED", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
             mixer.music.play()
             messagebox.showwarning("Warning", "Driver's eyes are closed!")
+            self.log_message("Driver's eyes are closed!")
 
     def detect_with_sunglasses(self):
         if not self.image_path:
@@ -522,13 +531,16 @@ class FaceEyeDetectionApp:
 
             if len(eyes) == 0:
                 sunglasses_detected = True
-                self.log_eye_closed_message("WARNING: SUNGLASSES DETECTED", "red")
+                cv2.putText(image, "WARNING: SUNGLASSES DETECTED", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                            (0, 0, 255), 2)
                 mixer.music.play()
+                self.log_message("Sunglasses detected.")
 
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
         if not sunglasses_detected:
-            self.log_eye_closed_message("Sunglasses not detected", "blue")
+            cv2.putText(image, "Sunglasses not detected", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            self.log_message("Sunglasses not detected.")
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
@@ -540,7 +552,8 @@ class FaceEyeDetectionApp:
         if sunglasses_detected:
             messagebox.showwarning("Warning", "Sunglasses detected!")
         else:
-            messagebox.showinfo("Detection Complete", "Face detection with sunglasses complete. Sunglasses not detected.")
+            messagebox.showinfo("Detection Complete",
+                                "Face detection with sunglasses complete. Sunglasses not detected.")
 
     def eye_aspect_ratio(self, eye):
         A = distance.euclidean(eye[1], eye[5])
@@ -548,20 +561,6 @@ class FaceEyeDetectionApp:
         C = distance.euclidean(eye[0], eye[3])
         ear = (A + B) / (2.0 * C)
         return ear
-
-    def log_direction_message(self, message, color):
-        self.direction_text_widget.config(state=tk.NORMAL)
-        self.direction_text_widget.insert(tk.END, message + "\n", ("colored",))
-        self.direction_text_widget.tag_config("colored", foreground=color)
-        self.direction_text_widget.see(tk.END)
-        self.direction_text_widget.config(state=tk.DISABLED)
-
-    def log_eye_closed_message(self, message, color):
-        self.eye_closed_text_widget.config(state=tk.NORMAL)
-        self.eye_closed_text_widget.insert(tk.END, message + "\n", ("colored",))
-        self.eye_closed_text_widget.tag_config("colored", foreground=color)
-        self.eye_closed_text_widget.see(tk.END)
-        self.eye_closed_text_widget.config(state=tk.DISABLED)
 
 if __name__ == "__main__":
     root = tk.Tk()
